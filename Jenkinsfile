@@ -4,7 +4,7 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        git url: 'https://github.com/you/app-repo'
+        git url: 'https://github.com/chhunlykev/gitops-nginx.git'
       }
     }
 
@@ -16,7 +16,7 @@ pipeline {
 
     stage('Build Docker Image') {
       steps {
-        sh 'docker build -t yourdockerhub/nginx-web:latest .'
+        sh 'docker build -t k3vchhunly/nginx-web:latest .'
       }
     }
 
@@ -24,8 +24,8 @@ pipeline {
       steps {
         withCredentials([string(credentialsId: 'dockerhub-pass', variable: 'DOCKER_PASS')]) {
           sh '''
-            echo $DOCKER_PASS | docker login -u yourdockerhub --password-stdin
-            docker push yourdockerhub/nginx-web:latest
+            echo $DOCKER_PASS | docker login -u k3vchhunly --password-stdin
+            docker push k3vchhunly/nginx-web:latest
           '''
         }
       }
@@ -34,9 +34,9 @@ pipeline {
     stage('Update GitOps Repo') {
       steps {
         sh '''
-        git clone https://github.com/you/gitops-repo.git
+        git clone https://github.com/chhunlykev/gitops-nginx.git
         cd gitops-repo/nginx
-        sed -i 's|image: .*|image: yourdockerhub/nginx-web:latest|' deployment.yaml
+        sed -i 's|image: .*|image: k3vchhunly/nginx-web:latest|' deployment.yaml
         git commit -am "Update image"
         git push
         '''
